@@ -1,0 +1,178 @@
+{
+  "name": "Automated KPI Reporting",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1552,
+        0
+      ],
+      "id": "372f0b1b-cca2-48a1-8dec-d72c82a03c0a",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \nSUM(sales) AS Total_Sales, \nCOUNT(sales_key) AS Order_Count, \nROUND(SUM(sales)/COUNT(sales_key),2) AS Average_Order_Value\nFROM \npublic.fact_sales;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1168,
+        160
+      ],
+      "id": "54a824e2-bd2f-4420-88ca-dfb4cdba2383",
+      "name": "KPI Summary",
+      "credentials": {
+        "postgres": {
+          "id": "qzPZDTcrxSzkLcNM",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \np.category AS Product_Category,\nSUM(f.sales) AS Total_Sales\n  \nFROM public.fact_sales f \nINNER JOIN \npublic.dim_product p\nON \np.product_key = f.product_key\nGROUP BY \np.category\nORDER BY \nSUM(f.sales) DESC",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1216,
+        -304
+      ],
+      "id": "7f706666-88e9-4502-a23f-de5fa59e4ee7",
+      "name": "Sales by Category",
+      "credentials": {
+        "postgres": {
+          "id": "qzPZDTcrxSzkLcNM",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \nc.region AS Region,\nSUM(f.sales) AS Total_Sales\n  \nFROM public.fact_sales f \nINNER JOIN \npublic.dim_customer c\nON \nc.customer_key = f.customer_key\nGROUP BY \nc.region\nORDER BY \nSUM(f.sales) DESC",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1184,
+        -144
+      ],
+      "id": "29727d46-0363-41ee-86e4-158d87498613",
+      "name": "Sales by Region",
+      "credentials": {
+        "postgres": {
+          "id": "qzPZDTcrxSzkLcNM",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \nd.month_year AS Date, \nSUM(f.sales) AS Total_Sales\n\nFROM \npublic.fact_sales f \nJOIN \npublic.dim_date d \nON \nf.date_key = d.date_key\nGROUP BY \nd.month_year, \nd.year, \nd.month_number\nORDER BY \nd.year, \nd.month_number",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -960,
+        16
+      ],
+      "id": "6f606827-9c7f-41b9-837d-64726353a140",
+      "name": "Monthly Sales Trend",
+      "credentials": {
+        "postgres": {
+          "id": "qzPZDTcrxSzkLcNM",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \np.product_name AS Product_Name,\nSUM(f.sales) AS Total_Sales\n  \nFROM public.fact_sales f \nINNER JOIN \npublic.dim_product p\nON \np.product_key = f.product_key\nGROUP BY \np.product_name\nORDER BY \nSUM(f.sales) DESC\nLIMIT 10;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -800,
+        -144
+      ],
+      "id": "bbd4c40d-ffc3-48d0-9064-bf6bc02bccaa",
+      "name": "Top 10 Products by Sales",
+      "credentials": {
+        "postgres": {
+          "id": "qzPZDTcrxSzkLcNM",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "KPI Summary",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sales by Category",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sales by Region",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Monthly Sales Trend",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Top 10 Products by Sales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KPI Summary": {
+      "main": [
+        []
+      ]
+    },
+    "Sales by Category": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "ae9fcb07-b6f9-485d-a84d-481865dca03c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6c5b53480b79ea3ca964b44f81dd04dcb061b55fafd54fc5ad688520415cc926"
+  },
+  "id": "nG9hbYP3Khvz8uJz",
+  "tags": []
+}

@@ -461,28 +461,16 @@ Beispiele:
 
 
 
-\## 📷 Screenshots
+## 📸 Screenshots
+
+### Dashboard Overview
+
+<img src="./Screenshots/Dashboard_Overview.jpg" width="900">
 
 
+### Dashboard Tooltip
 
-\### Dashboardübersicht
-
-
-
-!\[Dashboard Overview](Screenshots/Dashboard\_Overview.jpg)
-
-
-
-\---
-
-
-
-\### Tooltip-Seite
-
-
-
-!\[Dashboard Tooltip](Screenshots/Dashboard\_Tooltip.jpg)
-
+<img src="./Screenshots/Dashboard_Tooltip.jpg" width="900">
 
 ---
 
